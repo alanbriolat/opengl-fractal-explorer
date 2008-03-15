@@ -1,9 +1,9 @@
-objects = complex.o queue.o pixel.o image.o worker.o main.o
-headers = complex.h queue.h pixel.h image.h worker.h
+objects = complex.o queue.o pixel.o image.o worker.o ui.o main.o
+headers = complex.h queue.h pixel.h image.h worker.h ui.h
 
 CFLAGS += -DDEBUG -std=c99 -O2
 
-libs = -lm -lgd
+libs = -lm -lgd -lGL -lGLU -lglut
 
 all: fractal
 

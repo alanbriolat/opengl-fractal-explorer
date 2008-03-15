@@ -6,10 +6,12 @@
 #include "queue.h"
 #include "image.h"
 #include "worker.h"
+#include "ui.h"
 
 
 int main(int argc, char **argv)
 {
+    /*
     // Make a pixel queue
     Queue *q = queue_new();
 
@@ -20,4 +22,9 @@ int main(int argc, char **argv)
     image_writePNG(i, "foo-1.png");
 
     return 0;
+    */
+
+    ui_init(&argc, argv, 400, 400);
+    ui_run();
+    return 1;
 }
