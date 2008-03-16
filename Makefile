@@ -1,7 +1,7 @@
-objects = complex.o queue.o pixel.o image.o worker.o ui.o main.o
-headers = complex.h queue.h pixel.h image.h worker.h ui.h
+objects = complex.o queue.o fractal.o newworker.o ui.o main.o
+headers = complex.h queue.h fractal.h newworker.h ui.h
 
-CFLAGS += -DDEBUG -std=c99 -O2
+CFLAGS += -std=c99 -O2 #-DNDEBUG
 
 libs = -lm -lgd -lGL -lGLU -lglut
 
