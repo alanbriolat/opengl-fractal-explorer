@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <gd.h>
 
 #include "fractal.h"
@@ -113,8 +114,6 @@ void fractal_writePNG(Fractal *f, char *fname)
 	for (int k = 1; k <= 7; ++k) colors[j++] = gdImageColorAllocate(gdi, base_val + (k*color_step), 0, base_val + (k*color_step));
 	for (int k = 0; k <= 6; ++k) colors[j++] = gdImageColorAllocate(gdi, 225 - (k*color_step), 0, 225 - (k*color_step));
 
-    printf("%d\n", j);
-
     // Convert the image
     int x, y;
     for ( y = 0; y < f->height; ++y )
@@ -136,4 +135,124 @@ inline complex_t fractal_value(Fractal *f, int x, int y)
     return complex_new(
             real(f->min) + ((x + 0.5) * real(f->pixelsize)),
             imag(f->min) + ((y + 0.5) * imag(f->pixelsize)));
+}
+
+GLubyte *fractal_bitmap_RGB(Fractal *f)
+{
+	int color_step = 30;
+	int base_val = 15;
+
+    GLubyte colors[85][3];
+    GLubyte black[3] = {0, 0, 0};
+    
+    int j = 0;
+	
+	//	Blue
+	for (int k = 0; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = 0;
+        colors[j][2] = base_val + (k * color_step);
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = 0;
+        colors[j][2] = 255 - (k * color_step);
+    }
+	//	Aqua
+	for (int k = 1; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = base_val + (k * color_step);
+        colors[j][2] = base_val + (k * color_step);
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = 255 - (k * color_step);
+        colors[j][2] = 255 - (k * color_step);
+    }
+	//	Green
+	for (int k = 1; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = base_val + (k * color_step);
+        colors[j][2] = 0;
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 0;
+        colors[j][1] = 255 - (k * color_step);
+        colors[j][2] = 0;
+    }
+	//	Yellow
+	for (int k = 1; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = base_val + (k * color_step);
+        colors[j][1] = base_val + (k * color_step);
+        colors[j][2] = 0;
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 255 - (k * color_step);
+        colors[j][1] = 255 - (k * color_step);
+        colors[j][2] = 0;
+    }
+	//	Red
+	for (int k = 1; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = base_val + (k * color_step);
+        colors[j][1] = 0;
+        colors[j][2] = 0;
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 255 - (k * color_step);
+        colors[j][1] = 0;
+        colors[j][2] = 0;
+    }
+	//	Pink
+	for (int k = 1; k <= 7; ++k)
+    {
+        j++;
+        colors[j][0] = base_val + (k * color_step);
+        colors[j][1] = 0;
+        colors[j][2] = base_val + (k * color_step);
+    }
+	for (int k = 0; k <= 6; ++k)
+    {
+        j++;
+        colors[j][0] = 255 - (k * color_step);
+        colors[j][1] = 0;
+        colors[j][2] = 255 - (k * color_step);
+    }
+
+    // Allocate the memory
+    GLubyte *bitmap = (GLubyte *) malloc(f->width * f->height * 3 * sizeof(GLubyte));
+    GLubyte *ptr = bitmap;
+
+    for ( int y = 0; y < f->height; ++y )
+    {
+        for ( int x = 0; x < f->width; ++x )
+        {
+            if ( FRACTAL_REF(f, x, y) == ITERATIONS )
+                memcpy(ptr, black, 3 * sizeof(GLubyte));
+            else
+                memcpy(ptr, colors[FRACTAL_REF(f, x, y) % 85], 3 * sizeof(GLubyte));
+            ptr += 3 * sizeof(GLubyte);
+        }
+    }
+    
+    return bitmap;
 }

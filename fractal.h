@@ -3,6 +3,7 @@
 
 #include <pthread.h>
 #include <stdint.h>
+#include <GL/glut.h>
 
 #include "complex.h"
 
@@ -41,5 +42,8 @@ inline complex_t fractal_value(Fractal *f, int x, int y);
 
 // Write the fractal as a PNG image to fname
 void fractal_writePNG(Fractal *f, char *fname);
+
+// Make a RGB texture
+GLubyte *fractal_bitmap_RGB(Fractal *f);
 
 #endif

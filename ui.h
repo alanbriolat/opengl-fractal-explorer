@@ -12,4 +12,6 @@ GLvoid ui_resize(GLint width, GLint height);
 GLvoid ui_keypress(GLubyte key, GLint x, GLint y);
 GLvoid ui_drawscene();
 
+extern GLubyte *texture;
+
 #endif

@@ -8,13 +8,16 @@
 #define ESCAPE 27
 
 GLint window;
+GLubyte *texture;
 
 GLvoid ui_transform(GLint width, GLint height)
 {
   glViewport(0, 0, width, height);              /* Set the viewport */
   glMatrixMode(GL_PROJECTION);                  /* Select the projection matrix */
-  glLoadIdentity();				/* Reset The Projection Matrix */
-  gluPerspective(45.0,width/height,0.1,100.0);  /* Calculate The Aspect Ratio Of The Window */
+  glLoadIdentity();				                /* Reset The Projection Matrix */
+  glOrtho(-(width/2), (width/2), 
+          -(height/2), (height/2),
+          -1, 100);
   glMatrixMode(GL_MODELVIEW);                   /* Switch back to the modelview matrix */
 }
 
@@ -22,37 +25,50 @@ GLvoid ui_drawscene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBegin(GL_LINES);
-        glShadeModel(GL_SMOOTH);
-        glColor3f(1.0, 0.0, 0.0);
-        glVertex3f(0, 0, -6);
-        glColor3f(0.0, 1.0, 0.0);
-        glVertex3f(0, 1, -6);
-    glEnd();
+    //glPushMatrix();
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(
+            GL_TEXTURE_2D,      // Target
+            0,                  // Level
+            GL_RGB,             // Internal format
+            512,                // Width
+            512,                // Height
+            0,                  // Border
+            GL_RGB,             // Format
+            GL_UNSIGNED_BYTE,   // Type
+            texture);           // Pointer to the texture
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    glEnable(GL_TEXTURE_2D);
 
     glBegin(GL_QUADS);
-        glShadeModel(GL_SMOOTH);
-        glColor3f(0.0, 0.0, 1.0);
-        glVertex3f(-2, -2, -6);
-        glColor3f(0.0, 1.0, 0.0);
-        glVertex3f(-2, -1, -6);
-        glColor3f(1.0, 0.0, 0.0);
-        glVertex3f(-1, -1, -6);
-        glColor3f(1.0, 1.0, 1.0);
-        glVertex3f(-1, -2, -6);
+        glTexCoord2f(0.0, 0.0);
+        glVertex3f(-256, -256, 0);
+        glTexCoord2f(0.0, 1.0);
+        glVertex3f(-256, 256, 0);
+        glTexCoord2f(1.0, 1.0);
+        glVertex3f(256, 256, 0);
+        glTexCoord2f(1.0, 0.0);
+        glVertex3f(256, -256, 0);
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+    //glPopMatrix();
 
     glFlush();
+    glutSwapBuffers();
     printf("drawing scene\n");
 }
 
 GLvoid ui_init(int *argc, char **argv, GLint width, GLint height)
 {
     glutInit(argc, argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_SINGLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(width, height);
-    glutInitWindowPosition(0,0);
     window = glutCreateWindow("Hello, world!");
+
     ui_reinit(width, height);
     glutDisplayFunc(ui_drawscene);
     glutReshapeFunc(ui_resize);
@@ -61,7 +77,7 @@ GLvoid ui_init(int *argc, char **argv, GLint width, GLint height)
 
 GLvoid ui_reinit(GLint width, GLint height)
 {
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClearColor(0.0, 0.0, 15.0/255.0, 1.0);
     glPointSize(4.0);
     glLineWidth(2.0);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
