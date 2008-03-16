@@ -6,7 +6,7 @@
 //#include "queue.h"
 //#include "ui.h"
 #include "fractal.h"
-#include "newworker.h"
+#include "worker.h"
 
 
 int main(int argc, char **argv)

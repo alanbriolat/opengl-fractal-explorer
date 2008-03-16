@@ -1,5 +1,5 @@
-objects = complex.o queue.o fractal.o newworker.o ui.o main.o
-headers = complex.h queue.h fractal.h newworker.h ui.h
+objects = complex.o queue.o fractal.o worker.o ui.o main.o
+headers = complex.h queue.h fractal.h worker.h ui.h
 
 CFLAGS += -std=c99 -O2 #-DNDEBUG
 

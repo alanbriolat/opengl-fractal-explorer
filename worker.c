@@ -1,12 +1,9 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include <pthread.h>
 
+#include "worker.h"
 #include "config.h"
-#include "complex.h"
-#include "pixel.h"
-#include "queue.h"
-
-pthread_mutex_t pixelqueuelock;
+#include "fractal.h"
 
 int iterate(complex_t c)
 {
@@ -17,42 +14,40 @@ int iterate(complex_t c)
     return i;
 }
 
-void *worker(void *queue)
+void *worker(void *fractal)
 {
-    Queue *q = (Queue *) queue;
+    Fractal *f = (Fractal *) fractal;
 
-    pthread_mutex_lock(&pixelqueuelock);
-    while (!queue_empty(q))
+    int *pixel;
+    while ( (pixel = fractal_nextpixel(f)) != NULL )
     {
-        Pixel *p = (Pixel *) queue_remove(q);
-        pthread_mutex_unlock(&pixelqueuelock);
-        p->i = iterate(complex_mean(p->min, p->max));
-        pthread_mutex_lock(&pixelqueuelock);
+        FRACTAL_REF(f, pixel[0], pixel[1]) = 
+            iterate(fractal_value(f, pixel[0], pixel[1]));
+        /*fprintf(stderr, "Calculating (%f, %f) (%d, %d) = %d\n", 
+                real(FRACTAL_VALUE(f, pixel[0], pixel[1])),
+                imag(FRACTAL_VALUE(f, pixel[0], pixel[1])),
+                pixel[0], pixel[1], FRACTAL_REF(f, pixel[0], pixel[1]));*/
     }
-    pthread_mutex_unlock(&pixelqueuelock);
     pthread_exit(NULL);
 }
 
-void runqueue(Queue *q)
+void runfractal(Fractal *f)
 {
     pthread_t threads[THREADCOUNT];
     int rc;
 
-    pthread_mutex_init(&pixelqueuelock, NULL);
-    
-    int j;
-    for ( j = 0; j < THREADCOUNT; ++j )
+    fractal_restartcalc(f);
+
+    for ( int i = 0; i < THREADCOUNT; ++i )
     {
-        pthread_create(&threads[j], NULL, worker, q);
-        printf("Worker thread %d created\n", j);
+        pthread_create(&threads[i], NULL, worker, f);
+        printf("Worker thread %d created\n", i);
     }
 
     void *status;
-    for ( j = 0; j < THREADCOUNT; ++j )
+    for ( int i = 0; i < THREADCOUNT; ++i )
     {
-        pthread_join(threads[j], &status);
-        printf("Worker thread %d terminated\n", j);
+        pthread_join(threads[i], &status);
+        printf("Worker thread %d terminated\n", i);
     }
-
-    pthread_mutex_destroy(&pixelqueuelock);
 }

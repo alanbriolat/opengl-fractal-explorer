@@ -1,11 +1,10 @@
 #ifndef _WORKER_H_
 #define _WORKER_H_
 
-#include "complex.h"
-#include "queue.h"
+#include "fractal.h"
 
-void    runqueue(Queue *q);
-void    *worker(void *q);
+void    runfractal(Fractal *f);
+void    *worker(void *f);
 int     iterate(complex_t c);
 
 #endif
