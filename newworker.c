@@ -1,6 +1,9 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "newworker.h"
+#include "config.h"
+#include "fractal.h"
 
 int iterate(complex_t c)
 {
@@ -18,5 +21,33 @@ void *worker(void *fractal)
     int *pixel;
     while ( (pixel = fractal_nextpixel(f)) != NULL )
     {
-        f->iterations[pixel[1] * f->width + pixel[0]] = 
-            iterate(complex_new());
+        FRACTAL_REF(f, pixel[0], pixel[1]) = 
+            iterate(fractal_value(f, pixel[0], pixel[1]));
+        /*fprintf(stderr, "Calculating (%f, %f) (%d, %d) = %d\n", 
+                real(FRACTAL_VALUE(f, pixel[0], pixel[1])),
+                imag(FRACTAL_VALUE(f, pixel[0], pixel[1])),
+                pixel[0], pixel[1], FRACTAL_REF(f, pixel[0], pixel[1]));*/
+    }
+    pthread_exit(NULL);
+}
+
+void runfractal(Fractal *f)
+{
+    pthread_t threads[THREADCOUNT];
+    int rc;
+
+    fractal_restartcalc(f);
+
+    for ( int i = 0; i < THREADCOUNT; ++i )
+    {
+        pthread_create(&threads[i], NULL, worker, f);
+        printf("Worker thread %d created\n", i);
+    }
+
+    void *status;
+    for ( int i = 0; i < THREADCOUNT; ++i )
+    {
+        pthread_join(threads[i], &status);
+        printf("Worker thread %d terminated\n", i);
+    }
+}
