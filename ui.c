@@ -9,16 +9,27 @@
 
 GLint window;
 GLubyte *texture;
+GLfloat zoom = 1.0;
+GLint xoffset = 0;
+GLint yoffset = 0;
 
-GLvoid ui_transform(GLint width, GLint height)
+GLvoid ui_transform(GLint newwidth, GLint newheight)
 {
-  glViewport(0, 0, width, height);              /* Set the viewport */
-  glMatrixMode(GL_PROJECTION);                  /* Select the projection matrix */
-  glLoadIdentity();				                /* Reset The Projection Matrix */
-  glOrtho(-(width/2), (width/2), 
-          -(height/2), (height/2),
-          -1, 100);
-  glMatrixMode(GL_MODELVIEW);                   /* Switch back to the modelview matrix */
+    static GLint width, height;
+    width = (newwidth > 0) ? newwidth : width;
+    height = (newheight > 0) ? newheight : height;
+
+    glViewport(0, 0, width, height);              /* Set the viewport */
+    glMatrixMode(GL_PROJECTION);                  /* Select the projection matrix */
+    glLoadIdentity();				                /* Reset The Projection Matrix */
+    float w = width * zoom;
+    float h = height * zoom;
+    glOrtho(-(w / 2.0),
+            w / 2.0, 
+            -(h / 2.0),
+            h / 2.0,
+            -1, 100);
+    glMatrixMode(GL_MODELVIEW);                   /* Switch back to the modelview matrix */
 }
 
 GLvoid ui_drawscene()
@@ -28,8 +39,8 @@ GLvoid ui_drawscene()
     //glPushMatrix();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexImage2D(
             GL_TEXTURE_2D,      // Target
             0,                  // Level
@@ -104,5 +115,16 @@ GLvoid ui_keypress(GLubyte key, GLint x, GLint y)
             printf("Exiting...");
             glutDestroyWindow(window);
             exit(0);
+        case '+':
+            zoom -= 0.05;
+            printf("New zoom: %f\n", zoom);
+            ui_transform(0, 0);
+            break;
+        case '-':
+            zoom += 0.05;
+            printf("New zoom: %f\n", zoom);
+            ui_transform(0, 0);
+            break;
     }
+    glutPostRedisplay();
 }
