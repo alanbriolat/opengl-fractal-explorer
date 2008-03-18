@@ -10,6 +10,9 @@ GLvoid ui_transform(GLint width, GLint height);
 GLvoid ui_reinit(GLint width, GLint height);
 GLvoid ui_resize(GLint width, GLint height);
 GLvoid ui_keypress(GLubyte key, GLint x, GLint y);
+GLvoid ui_specialkeypress(GLint key, GLint x, GLint y);
+GLvoid ui_mouseevent(GLint button, GLint state, GLint x, GLint y);
+GLvoid ui_mousemotion(GLint x, GLint y);
 GLvoid ui_drawscene();
 
 extern GLubyte *texture;

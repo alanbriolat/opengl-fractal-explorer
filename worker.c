@@ -27,6 +27,7 @@ void *worker(void *fractal)
                 real(FRACTAL_VALUE(f, pixel[0], pixel[1])),
                 imag(FRACTAL_VALUE(f, pixel[0], pixel[1])),
                 pixel[0], pixel[1], FRACTAL_REF(f, pixel[0], pixel[1]));*/
+        free(pixel);
     }
     pthread_exit(NULL);
 }
