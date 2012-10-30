@@ -3,7 +3,7 @@ headers = complex.h queue.h fractal.h worker.h ui.h
 
 CFLAGS += -std=c99 -O2 #-DNDEBUG
 
-libs = -lm -lgd -lGL -lGLU -lglut
+libs = -lm -lgd -lGL -lGLU -lglut -lpthread
 
 all: fractal
 

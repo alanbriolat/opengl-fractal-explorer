@@ -130,7 +130,7 @@ void fractal_writePNG(Fractal *f, char *fname)
     fclose(fp);
 }
 
-inline complex_t fractal_value(Fractal *f, int x, int y)
+complex_t fractal_value(Fractal *f, int x, int y)
 {
     return complex_new(
             real(f->min) + ((x + 0.5) * real(f->pixelsize)),
@@ -255,4 +255,11 @@ GLubyte *fractal_bitmap_RGB(Fractal *f)
     }
     
     return bitmap;
+}
+
+Fractal *fractal_zoom(Fractal *source, int xoffset, int yoffset, float scale)
+{
+    complex_t center = complex_new(
+            ((real(source->min) + real(source->max)) / 2) + (xoffset * real(source->pixelsize)),
+            ((imag(source->min) + imag(source->max)) / 2) + (yoffset * imag(source->pixelsize)));
 }

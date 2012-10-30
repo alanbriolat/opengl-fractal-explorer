@@ -27,6 +27,16 @@ typedef struct {
 // Allocate and initialise a Fractal object
 Fractal *fractal_new(int width, int height, complex_t min, complex_t max);
 
+/*
+ * Create a fractal from an existing one zoomed by a particular amount
+ *
+ * scale > 1 = zoom out
+ * scale < 1 = zoom in
+ *
+ * xoffset and yoffset are in pixels from the center of the fractal
+ */
+Fractal *fractal_zoom(Fractal *source, int xoffset, int yoffset, float scale);
+
 // Destroy the Fractal object
 void fractal_destroy(Fractal *f);
 
@@ -38,7 +48,7 @@ void fractal_restartcalc(Fractal *f);
 int *fractal_nextpixel(Fractal *f);
 
 // Get the position on the complex plane for the specified 
-inline complex_t fractal_value(Fractal *f, int x, int y);
+complex_t fractal_value(Fractal *f, int x, int y);
 
 // Write the fractal as a PNG image to fname
 void fractal_writePNG(Fractal *f, char *fname);

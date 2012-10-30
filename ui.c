@@ -171,8 +171,8 @@ GLvoid ui_keypress(GLubyte key, GLint x, GLint y)
             if ( zoom <= 0.5 ) 
             {
                 complex_t center = complex_new(
-                        real(f->min) + (real(f->max) - real(f->min))/2 + (xoffset * real(f->pixelsize)),
-                        imag(f->min) + (imag(f->max) - imag(f->min))/2 + (yoffset * imag(f->pixelsize)));
+                        (real(f->min + f->max) / 2) + (xoffset * real(f->pixelsize)),
+                        (imag(f->min + f->max) / 2) + (yoffset * imag(f->pixelsize)));
                 // Range of real either side of the center, divided by 2 for zoom
                 _complex_t px = (real(f->max) - real(f->min)) / 4;
                 // Range of imaginary either side of the center, divided by 2 for zoom
